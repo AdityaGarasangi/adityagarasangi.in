@@ -14,7 +14,6 @@
         <router-link to="/blogs" class="nav-item" :class="{ 'active-link': isRoute('/blogs') }" @click="closeMenu">Blogs</router-link>
         <router-link to="/journey" class="nav-item" :class="{ 'active-link': isRoute('/journey') }" @click="closeMenu">Journey</router-link>
         <router-link to="/about" class="nav-item" :class="{ 'active-link': isRoute('/about') }" @click="closeMenu">About</router-link>
-        <a href="/#contact" class="nav-item" :class="{ 'active-link': currentSection === 'contact' && isRoute('/') }" @click="closeMenu">Contact</a>
       </div>
     </div>
   </nav>
@@ -47,6 +46,9 @@ const scrollToTop = (e) => {
   if (route.path === '/') {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.location.hash) {
+      history.replaceState(null, '', '/');
+    }
     closeMenu();
   } else {
     router.push('/');
@@ -61,7 +63,7 @@ const handleScroll = () => {
     return;
   }
 
-  const sections = ['home', 'projects', 'blogs', 'contact'];
+  const sections = ['home', 'projects', 'blogs'];
   let found = 'home';
   
   for (let i = sections.length - 1; i >= 0; i--) {
@@ -101,17 +103,18 @@ watch(() => route.path, () => {
   left: 0;
   width: 100%;
   z-index: 1000;
-  padding: 1.25rem 0;
-  transition: all 0.3s ease;
-  background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid transparent;
+  padding: 1.2rem 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(10, 10, 10, 0.4);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .navbar.scrolled {
-  padding: 0.75rem 0;
-  background: rgba(5, 5, 5, 0.9);
-  border-bottom: 1px solid var(--glass-border);
+  padding: 1rem 0;
+  background: rgba(10, 10, 10, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .navbar-content {

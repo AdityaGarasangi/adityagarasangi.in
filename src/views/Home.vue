@@ -5,9 +5,11 @@
       <div class="glow-blob"></div>
       <div class="container hero-content">
         <h1 class="hero-title">Hey, I'm <span class="text-gradient">Aditya</span></h1>
-        <div class="hero-subtitle-container">
-          <p class="hero-subtitle">{{ typeWriterText1 }}<span class="cursor" v-if="typingPhase === 1">|</span></p>
-          <p class="hero-subtitle">{{ typeWriterText2 }}<span class="cursor" v-if="typingPhase === 2">|</span></p>
+        <div class="hero-subtitle-container" v-if="mounted">
+          <div class="intro-text">
+            <p class="hero-subtitle">{{ typedLine1 }}<span class="cursor" v-if="typingPhase === 1">|</span></p>
+            <p class="hero-subtitle" v-if="currentIntro.line2 || typingPhase === 2">{{ typedLine2 }}<span class="cursor" v-if="typingPhase === 2">|</span></p>
+          </div>
         </div>
         <div class="hero-actions">
           <router-link to="/side-hustles" class="btn btn-primary">See my side hustles</router-link>
@@ -25,7 +27,15 @@
         </div>
         
         <div v-if="loadingProjects" class="grid grid-cols-2">
-          <div v-for="i in 4" :key="i" class="skeleton glass-card" style="height: 200px"></div>
+          <div v-for="i in 4" :key="i" class="glass-card flex flex-col gap-4">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 80%"></div>
+            <div class="flex gap-4 mt-auto">
+              <div class="skeleton skeleton-pill"></div>
+              <div class="skeleton skeleton-pill"></div>
+            </div>
+          </div>
         </div>
         <div v-else-if="featuredProjects.length" class="grid grid-cols-2">
           <ProjectCard v-for="repo in featuredProjects" :key="repo.id" :project="repo" />
@@ -43,7 +53,20 @@
         </div>
         
         <div v-if="loadingBlogs" class="grid grid-cols-2">
-          <div v-for="i in 4" :key="i" class="skeleton glass-card" style="height: 200px"></div>
+          <div v-for="i in 4" :key="i" class="glass-card flex flex-col gap-4">
+            <div class="flex gap-4 mb-2">
+              <div class="skeleton skeleton-pill" style="width: 40px"></div>
+              <div class="skeleton skeleton-pill" style="width: 80px"></div>
+            </div>
+            <div class="skeleton skeleton-title" style="width: 90%"></div>
+            <div class="flex justify-between items-center mt-auto">
+              <div class="flex gap-2">
+                <div class="skeleton skeleton-pill"></div>
+                <div class="skeleton skeleton-pill"></div>
+              </div>
+              <div class="skeleton skeleton-pill" style="width: 50px"></div>
+            </div>
+          </div>
         </div>
         <div v-else-if="featuredBlogs.length" class="grid grid-cols-2 blogs-grid">
           <BlogCard v-for="(post, index) in featuredBlogs" :key="post.slug" :post="post" :isFeatured="index === 0" />
@@ -155,54 +178,134 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useHead } from '@unhead/vue';
 import ProjectCard from '../components/ProjectCard.vue';
 import BlogCard from '../components/BlogCard.vue';
+import { FEATURED_REPOS } from '../utils/projectFormatter';
 
-// Typing Effect
-const targetText1 = "I like building things that are clean, simple, and actually work";
-const targetText2 = "— and fixing them when they don’t.";
-const typeWriterText1 = ref('');
-const typeWriterText2 = ref('');
+useHead({
+  title: 'Aditya Garasangi | Portfolio',
+  meta: [
+    { name: 'description', content: 'Explore the portfolio of Aditya Garasangi, a DevOps and Cloud Engineering enthusiast building scalable infrastructure and modern web apps.' },
+    { property: 'og:title', content: 'Aditya Garasangi | Portfolio' },
+    { property: 'og:description', content: 'DevOps, Cloud Engineering, and Software Development Portfolio.' },
+    { property: 'og:type', content: 'website' }
+  ]
+});
+
+// Rotating Intro Text
+const introLines = [
+  "I like building things that are clean, simple, and actually work — and fixing them when they don’t.",
+  "I like creating things that feel simple, useful, and thoughtfully made.",
+  "Building, learning, breaking things, and figuring them out along the way.",
+  "Somewhere between creativity, curiosity, and controlled chaos.",
+  "Trying to make useful things while enjoying life along the way.",
+  "Making life better with music, memes, and good food.",
+  "Probably listening to music or laughing at something dumb right now.",
+  "Enjoying good food, good music, and peaceful little moments.",
+  "Here for good vibes, fun conversations, and comfort shows.",
+  "Just vibing through life with music in the background."
+];
+
+const currentIntro = ref({ line1: '', line2: '' });
+const typedLine1 = ref('');
+const typedLine2 = ref('');
 const typingPhase = ref(1);
+const mounted = ref(false);
 
 const typeText = () => {
   let i = 0;
   const speed = 40;
   
   const typeLine1 = () => {
-    if (i < targetText1.length) {
-      typeWriterText1.value += targetText1.charAt(i);
+    if (i < currentIntro.value.line1.length) {
+      typedLine1.value += currentIntro.value.line1.charAt(i);
       i++;
       setTimeout(typeLine1, speed);
     } else {
-      typingPhase.value = 2;
-      i = 0;
-      setTimeout(typeLine2, 200);
+      if (currentIntro.value.line2) {
+        typingPhase.value = 2;
+        i = 0;
+        setTimeout(typeLine2, 200);
+      } else {
+        typingPhase.value = 0;
+      }
     }
   };
   
   const typeLine2 = () => {
-    if (i < targetText2.length) {
-      typeWriterText2.value += targetText2.charAt(i);
+    if (i < currentIntro.value.line2.length) {
+      typedLine2.value += currentIntro.value.line2.charAt(i);
       i++;
       setTimeout(typeLine2, speed);
     } else {
-      typingPhase.value = 0; // done
+      typingPhase.value = 0;
     }
   };
   
   typeLine1();
 };
 
+const shuffleArray = (arr) => {
+  const newArr = [...arr];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+};
+
+const getBalancedLines = (text) => {
+  if (text.length <= 50) return { line1: text, line2: '' };
+  
+  const words = text.split(' ');
+  let bestSplit = 0;
+  let smallestDiff = Infinity;
+  
+  for (let i = 1; i < words.length - 1; i++) {
+    const l1 = words.slice(0, i).join(' ');
+    const l2 = words.slice(i).join(' ');
+    const diff = l1.length - l2.length;
+    
+    if (diff > 0 && diff < smallestDiff) {
+      smallestDiff = diff;
+      bestSplit = i;
+    }
+  }
+  
+  if (bestSplit === 0) bestSplit = Math.ceil(words.length / 2);
+  
+  return {
+    line1: words.slice(0, bestSplit).join(' '),
+    line2: words.slice(bestSplit).join(' ')
+  };
+};
+
+const initRotatingText = () => {
+  let savedState = null;
+  try {
+    savedState = JSON.parse(localStorage.getItem('intro_rotation'));
+  } catch (e) {}
+
+  if (!savedState || !savedState.shuffled || savedState.currentIndex >= savedState.shuffled.length) {
+    savedState = {
+      shuffled: shuffleArray(introLines),
+      currentIndex: 0
+    };
+  }
+
+  const selectedText = savedState.shuffled[savedState.currentIndex];
+  currentIntro.value = getBalancedLines(selectedText);
+  
+  savedState.currentIndex += 1;
+  localStorage.setItem('intro_rotation', JSON.stringify(savedState));
+  mounted.value = true;
+  
+  setTimeout(typeText, 300);
+};
+
 // Data fetching
 const GITHUB_USERNAME = 'adityagarasangi';
-const HASHNODE_USERNAME = 'adityagarasangi0';
-const selectedRepos = [
-  'AWS-Devops-Portfolio-Deployment',
-  'dockerized-nodejs-mongo-app',
-  'Kubernetes-Email-Submission-App',
-  'Jenkins-CICD-Pipeline-Nodejs',
-];
 
 const featuredProjects = ref([]);
 const loadingProjects = ref(true);
@@ -212,10 +315,12 @@ const loadingBlogs = ref(true);
 
 const fetchProjects = async () => {
   try {
-    const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`);
-    const repos = await res.json();
-    featuredProjects.value = selectedRepos
-      .map(name => repos.find(r => r.name === name))
+    const res = await fetch('/api/github/repos');
+    if (!res.ok) throw new Error('Failed to fetch repos');
+    const result = await res.json();
+    const allRepos = result.data || [];
+    featuredProjects.value = FEATURED_REPOS
+      .map(name => allRepos.find(r => r.name === name))
       .filter(Boolean);
   } catch (e) {
     console.error('Failed to load projects', e);
@@ -225,23 +330,11 @@ const fetchProjects = async () => {
 };
 
 const fetchBlogs = async () => {
-  const query = `
-    query GetPosts {
-      user(username: "${HASHNODE_USERNAME}") {
-        posts(page: 1, pageSize: 4) {
-          nodes { title brief slug coverImage { url } readTimeInMinutes }
-        }
-      }
-    }
-  `;
   try {
-    const res = await fetch("https://gql.hashnode.com", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query })
-    });
+    const res = await fetch('/api/blogs?limit=4');
+    if (!res.ok) throw new Error('Failed to fetch blogs');
     const result = await res.json();
-    featuredBlogs.value = result.data?.user?.posts?.nodes || [];
+    featuredBlogs.value = result.data?.blogs || [];
   } catch (e) {
     console.error('Failed to load blogs', e);
   } finally {
@@ -283,7 +376,7 @@ const scrollTo = (hash) => {
 };
 
 onMounted(() => {
-  setTimeout(typeText, 500);
+  initRotatingText();
   fetchProjects();
   fetchBlogs();
 });
@@ -370,7 +463,28 @@ onMounted(() => {
 
 .mb-4 { margin-bottom: 1rem; }
 .mb-8 { margin-bottom: 2rem; }
+/* Blur Fade Transition */
+.blur-fade-enter-active {
+  transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              filter 1s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.blur-fade-enter-from {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(10px);
+}
+.blur-fade-enter-to {
+  opacity: 1;
+  filter: blur(0px);
+  transform: translateY(0);
+}
 
+.intro-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
 /* Overview Layout */
 .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
 .overview-dashboard {

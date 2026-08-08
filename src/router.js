@@ -5,6 +5,7 @@ import Blogs from './views/Blogs.vue';
 import BlogRead from './views/BlogRead.vue';
 import Journey from './views/Journey.vue';
 import About from './views/About.vue';
+import NotFound from './views/NotFound.vue';
 
 const routes = [
   {
@@ -36,25 +37,28 @@ const routes = [
     path: '/about',
     name: 'About',
     component: About
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound
   }
 ];
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (to.hash) {
-      return {
-        el: to.hash,
-        behavior: 'smooth',
+export const scrollBehavior = (to, from, savedPosition) => {
+  return new Promise((resolve) => {
+    // Wait for the out-in transition to finish (var(--transition-slow) is 500ms)
+    setTimeout(() => {
+      if (to.hash) {
+        resolve({ el: to.hash, behavior: 'smooth' });
+      } else if (savedPosition) {
+        resolve(savedPosition);
+      } else {
+        // Scroll instantly so the new page appears at the top when it fades in
+        resolve({ top: 0, behavior: 'instant' });
       }
-    }
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { top: 0, behavior: 'instant' }
-    }
-  }
-});
+    }, 500);
+  });
+};
 
-export default router;
+export { routes };

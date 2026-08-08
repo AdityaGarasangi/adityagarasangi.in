@@ -1,8 +1,28 @@
-import { createApp } from 'vue'
+import { ViteSSG } from 'vite-ssg'
 import './style.css'
 import App from './App.vue'
-import router from './router'
+import { routes, scrollBehavior } from './router.js'
 
-const app = createApp(App)
-app.use(router)
-app.mount('#app')
+export const createApp = ViteSSG(
+  App,
+  { routes, scrollBehavior },
+  ({ app, router, routes, isClient, initialState }) => {
+    app.directive('reveal', {
+      mounted(el) {
+        el.classList.add('reveal-item');
+        // Only run IntersectionObserver on the client side
+        if (isClient) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                el.classList.add('is-visible');
+                observer.unobserve(el);
+              }
+            });
+          }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+          observer.observe(el);
+        }
+      }
+    });
+  }
+)

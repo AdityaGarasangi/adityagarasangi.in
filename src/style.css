@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap');
+@import 'highlight.js/styles/github-dark.css';
 
 :root {
   --bg-dark: #050505;
@@ -174,28 +175,63 @@ textarea.form-control {
 }
 
 /* Animations */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity var(--transition-slow), transform var(--transition-slow);
+/* Seamless Page Transitions */
+.page-enter-active,
+.page-leave-active {
+  transition: 
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.fade-enter-from,
-.fade-leave-to {
+
+.page-enter-from {
   opacity: 0;
   transform: translateY(10px);
+  filter: blur(10px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+  filter: blur(10px);
+}
+
+/* Scroll Reveal */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Skeleton Loading */
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background: linear-gradient(
+    90deg, 
+    rgba(255, 255, 255, 0.03) 25%, 
+    rgba(255, 255, 255, 0.08) 50%, 
+    rgba(255, 255, 255, 0.03) 75%
+  );
   background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
+  animation: skeleton-shimmer 2s infinite linear;
   border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
 }
 
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@keyframes skeleton-shimmer {
+  0% { background-position: 150% 0; }
+  100% { background-position: -50% 0; }
 }
+
+.skeleton-text { height: 1rem; width: 100%; margin-bottom: 0.5rem; }
+.skeleton-title { height: 1.5rem; width: 70%; margin-bottom: 1rem; }
+.skeleton-rect { height: 100%; width: 100%; }
+.skeleton-pill { height: 1.5rem; width: 60px; border-radius: 999px; }
 
 /* Grid Utilities */
 .grid {
@@ -224,3 +260,117 @@ textarea.form-control {
 .justify-center { justify-content: center; }
 .gap-4 { gap: 1rem; }
 .gap-2 { gap: 0.5rem; }
+
+/* GitHub Markdown Aesthetic */
+.markdown-body {
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-family: var(--font-sans);
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+
+.markdown-body h1 { font-size: 2rem; padding-bottom: 0.3em; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.markdown-body h2 { font-size: 1.5rem; padding-bottom: 0.3em; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.markdown-body h3 { font-size: 1.25rem; }
+
+.markdown-body p,
+.markdown-body blockquote,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body dl,
+.markdown-body table,
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2rem;
+}
+
+.markdown-body li + li {
+  margin-top: 0.25rem;
+}
+
+.markdown-body code {
+  padding: 0.2rem 0.4rem;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  font-family: 'Fira Code', monospace;
+}
+
+.markdown-body pre {
+  padding: 1rem;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.markdown-body pre code {
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: 0;
+  font-size: 100%;
+}
+
+.markdown-body blockquote {
+  padding: 0 1rem;
+  color: var(--text-muted);
+  border-left: 0.25rem solid var(--accent-primary);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.markdown-body img {
+  max-width: 100%;
+  box-sizing: content-box;
+  background-color: transparent;
+  border-radius: 8px;
+}
+
+.markdown-body hr {
+  height: 0.25rem;
+  padding: 0;
+  margin: 2rem 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 0;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.markdown-body table tr {
+  background-color: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  padding: 6px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.markdown-body table th {
+  font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.05);
+}

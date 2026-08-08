@@ -1,22 +1,26 @@
 <template>
-  <div class="glass-card blog-card" :class="{ 'featured': isFeatured }">
-    <div class="blog-image">
-      <img :src="post.coverImage?.url || '/images/favicon.svg'" :alt="post.title" :class="{ 'placeholder': !post.coverImage }" />
-    </div>
-    
-    <div class="blog-content">
-      <div v-if="isFeatured" class="featured-badge">Latest Story</div>
+  <div class="glass-card blog-card group" v-reveal>
+    <router-link :to="`/blog/${post.slug}`" class="blog-card-link">
       
-      <h3><router-link :to="`/blog/${post.slug}`" class="text-gradient hover-underline">{{ post.title }}</router-link></h3>
-      <p class="desc">{{ post.brief }}</p>
-      
-      <div class="footer-meta">
-        <span class="read-time"><i class="far fa-clock"></i> {{ post.readTimeInMinutes }} min read</span>
-        <router-link :to="`/blog/${post.slug}`" class="btn" :class="isFeatured ? 'btn-primary' : 'btn-link'">
-          Read <i class="fas fa-arrow-right ml-2"></i>
-        </router-link>
+      <div class="blog-content">
+        <div class="meta-top">
+          <span class="date">{{ formatDate(post.publishedAt) }}</span>
+          <span class="read-time"><i class="far fa-clock"></i> {{ post.readTimeInMinutes }} min read</span>
+        </div>
+        
+        <h3 class="title group-hover:text-gradient">{{ post.title }}</h3>
+        
+        <div class="footer-row">
+          <div class="tags-container" v-if="post.tags?.length">
+            <span v-for="tag in post.tags.slice(0, 3)" :key="tag.name" class="tag-pill">
+              {{ tag.name }}
+            </span>
+          </div>
+          
+          <span class="read-more">Read <i class="fas fa-arrow-right ml-1"></i></span>
+        </div>
       </div>
-    </div>
+    </router-link>
   </div>
 </template>
 
@@ -28,136 +32,122 @@ defineProps({
     default: false
   }
 });
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+};
 </script>
 
 <style scoped>
 .blog-card {
   padding: 0;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  transition: all var(--transition-slow);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(15, 15, 15, 0.4);
 }
 
-.blog-card.featured {
-  grid-column: 1 / -1;
-  flex-direction: row;
+.blog-card:hover {
+  transform: translateX(10px);
+  border-color: rgba(96, 165, 250, 0.2);
+  background: rgba(20, 20, 20, 0.6);
+  box-shadow: -10px 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(96, 165, 250, 0.05);
 }
 
-.blog-image {
-  height: 200px;
-  background: rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-}
-
-.blog-card.featured .blog-image {
-  height: auto;
-  min-height: 300px;
-  width: 50%;
-}
-
-.blog-image img {
-  width: 100%;
+.blog-card-link {
+  display: block;
+  padding: 1.5rem 2rem;
   height: 100%;
-  object-fit: cover;
-  transition: transform var(--transition-slow);
-}
-
-.blog-card:hover .blog-image img {
-  transform: scale(1.05);
-}
-
-.blog-image img.placeholder {
-  object-fit: contain;
-  padding: 3rem;
-  opacity: 0.2;
 }
 
 .blog-content {
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  flex: 1;
 }
 
-.blog-card.featured .blog-content {
-  padding: 3rem;
-  width: 50%;
-  justify-content: center;
-}
-
-.featured-badge {
-  color: var(--accent-primary);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-h3 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-}
-
-.blog-card.featured h3 {
-  font-size: 1.8rem;
-}
-
-.desc {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-}
-
-.blog-card.featured .desc {
-  -webkit-line-clamp: 4;
-  font-size: 1.05rem;
-}
-
-.footer-meta {
-  margin-top: auto;
+.meta-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--glass-border);
-}
-
-.read-time {
+  gap: 1rem;
+  margin-bottom: 0.8rem;
   font-size: 0.85rem;
   color: var(--text-muted);
 }
 
-.btn-link {
-  color: var(--accent-primary);
-  font-weight: 500;
+.read-time {
   display: flex;
   align-items: center;
+  gap: 0.3rem;
 }
 
-.btn-link:hover {
-  color: var(--accent-secondary);
+.title {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
 }
 
-.ml-2 {
-  margin-left: 0.5rem;
+.blog-card:hover .title {
+  color: var(--accent-primary);
 }
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.tags-container {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag-pill {
+  background: rgba(96, 165, 250, 0.05);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all var(--transition-fast);
+}
+
+.blog-card:hover .tag-pill {
+  border-color: rgba(96, 165, 250, 0.2);
+  color: var(--accent-primary);
+}
+
+.read-more {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  transition: all var(--transition-fast);
+}
+
+.blog-card:hover .read-more {
+  color: var(--accent-primary);
+  transform: translateX(4px);
+}
+
+.ml-1 { margin-left: 0.25rem; }
 
 @media (max-width: 768px) {
-  .blog-card.featured {
-    flex-direction: column;
+  .blog-card-link {
+    padding: 1.2rem 1.5rem;
   }
-  .blog-card.featured .blog-image {
-    width: 100%;
-    min-height: 250px;
-  }
-  .blog-card.featured .blog-content {
-    width: 100%;
-    padding: 1.5rem;
+  .title {
+    font-size: 1.2rem;
   }
 }
 </style>

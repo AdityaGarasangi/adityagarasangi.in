@@ -1,240 +1,212 @@
 <template>
-  <div class="about-view pt-32 pb-16">
-    <div class="container about-container">
-      
-      <!-- Top Hero Section -->
-      <div class="about-hero glass-card mb-16">
-        <div class="about-image-wrapper">
-          <div class="glow-backdrop"></div>
-          <img src="/images/pfp.jpg" alt="Aditya Garasangi" class="about-img" />
-          <div class="exp-badge pulse-subtle">
-            <span class="exp-num">{{ expBadge.num }}</span>
-            <span class="exp-text" v-html="expBadge.text"></span>
-          </div>
-        </div>
-        <div class="about-intro">
-          <h1 class="text-4xl font-bold mb-2">Hey👋, I’m Aditya!</h1>
-          <p class="text-accent text-xl font-medium tracking-wide uppercase mb-8">DevOps & Cloud Engineer</p>
-          <div class="flex gap-4">
-            <a href="/#contact" class="btn btn-primary">Say hello</a>
-            <a href="https://drive.google.com/file/d/1aaov9G2PWMhvER-yXzbksmCdQOC_4XbK/view?usp=sharing" target="_blank" class="btn btn-secondary">Grab my CV</a>
-          </div>
-        </div>
-      </div>
+  <div class="about-view">
+    <div class="container about-canvas">
+      <!-- Huge Masthead -->
+      <header class="about-hero fade-in">
+        <h1 class="about-title">Aditya Garasangi</h1>
+        <p class="about-subtitle">DevOps Engineer & Cybersecurity Enthusiast</p>
+      </header>
 
-      <!-- Clean Article Layout for Text -->
-      <div class="about-content-wrapper">
-        <div class="about-text-clean">
-          <p class="lead-text">This is my little corner on the internet where I share things I build, experiment with, and occasionally break. You’ll find a mix of projects, ideas, and random stuff I’ve been curious enough to explore.</p>
+      <div class="about-content fade-in-delayed">
+        <div class="story-section">
+          <p class="lead">just a tiny corner of the internet that feels a little like home.</p>
           
-          <div class="text-divider"></div>
+          <p>This is my little spot on the web - somewhere to dump my posts, projects, random experiments, half-baked notes, and whatever else I feel like sharing. I'm an engineer by day, explorer by… also day, honestly.</p>
 
-          <p>I work in DevOps, but I’m really just someone who enjoys building things and figuring out how they work (and sometimes why they don’t). A lot of my time goes into side projects, small automations, and trying to make everyday things a bit simpler and smoother.</p>
-          <p>Most of what I do starts with a random thought like “this could probably be better” — and then turns into a mini project that I spend way too much time on.</p>
-          <p>When I’m not staring at logs or tweaking configs, I’m probably out hunting for good coffee, discovering new indie music, or deep into a YouTube rabbit hole that I didn’t plan on entering.</p>
-          <p>I like keeping things simple, learning as I go, and sharing whatever I pick up along the way — so feel free to explore.</p>
-          <p>If you ever want to talk about tech, ideas, or just random internet stuff, feel free to reach out 🙂</p>
-          <p class="footer-note">Oh, and there’s a good chance I’ve spent more time than necessary on some tiny detail on this site — see if you can spot one.</p>
+          <p>When I'm not working, you'll probably find me deep in a rabbit hole of music or memes, accidentally staying up till 2am doomscrolling (we've all been there), or watching "just one more episode" of a sitcom - which always, <em>always</em> turns into four.</p>
+
+          <p>Oh, and I take Bangalore's biryani scene very seriously. Like, embarrassingly seriously. Some people collect stamps or experiences - I collect "bro you HAVE to try this place" recommendations. My list keeps growing and I have zero regrets.</p>
+
+          <p>Still figuring a lot of things out as I go, but honestly? That's the fun part.</p>
+
+          <p class="footer-note">Glad you made it here. Stay as long as you like 🙂</p>
+        </div>
+
+        <!-- Aesthetic Footer Navigation -->
+        <div class="about-footer-nav">
+          <div class="nav-group">
+            <span class="nav-label">Connect</span>
+            <div class="nav-links">
+              <a href="https://linkedin.com/in/adityagarasangi" target="_blank">LinkedIn</a>
+              <span class="nav-sep">•</span>
+              <a href="https://github.com/adityagarasangi" target="_blank">GitHub</a>
+              <span class="nav-sep">•</span>
+              <a href="https://twitter.com/adityagarasangi" target="_blank">Twitter</a>
+            </div>
+          </div>
+          
+          <div class="nav-group">
+            <span class="nav-label">Inquiries</span>
+            <a href="mailto:adityagarasangi77@gmail.com" class="email-link">adityagarasangi77@gmail.com</a>
+          </div>
+
+          <div class="nav-group">
+            <span class="nav-label">Credentials</span>
+            <a href="https://drive.google.com/file/d/1aaov9G2PWMhvER-yXzbksmCdQOC_4XbK/view?usp=sharing" target="_blank" class="email-link">View Resume</a>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { useHead } from '@unhead/vue';
 
-// Experience Badge Logic
-const expBadge = ref({ num: '0', text: '' });
-const calcExperience = () => {
-  const start = new Date(2025, 7); // Aug 2025
-  const now = new Date();
-  let totalMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1;
-  totalMonths = Math.max(0, totalMonths);
-  
-  const years = Math.floor(totalMonths / 12);
-  const rem = totalMonths % 12;
-  
-  if (years === 0) {
-    expBadge.value = { num: totalMonths, text: `Month${totalMonths !== 1 ? 's' : ''}<br>Experience` };
-  } else if (rem === 0) {
-    expBadge.value = { num: years, text: `Year${years !== 1 ? 's' : ''}<br>Experience` };
-  } else {
-    expBadge.value = { num: (years + rem/12).toFixed(1), text: 'Years<br>Experience' };
-  }
-};
-
-onMounted(() => {
-  calcExperience();
-  window.scrollTo(0, 0);
+useHead({
+  title: 'About | Aditya Garasangi',
+  meta: [
+    { name: 'description', content: 'DevOps Engineer focused on simplicity, efficiency, and building reliable cloud infrastructure.' }
+  ]
 });
 </script>
 
 <style scoped>
-.pt-32 { padding-top: 8rem; }
-.pb-16 { padding-bottom: 4rem; }
-.mb-16 { margin-bottom: 4rem; }
-.mb-8 { margin-bottom: 2rem; }
-.mb-4 { margin-bottom: 1rem; }
-.mb-2 { margin-bottom: 0.5rem; }
+.about-view {
+  min-height: 100vh;
+  padding: 180px 0 100px 0;
+  background: var(--bg-primary);
+}
 
-.about-container {
-  max-width: 900px;
+.about-canvas {
+  max-width: 800px;
   margin: 0 auto;
+  padding: 0 2rem;
 }
 
-/* Hero Section */
+/* Masthead */
 .about-hero {
-  display: flex;
-  flex-direction: column;
-  padding: 3rem;
-  gap: 3rem;
-  align-items: center;
-  border-radius: var(--radius-lg);
-}
-
-@media (min-width: 768px) {
-  .about-hero {
-    flex-direction: row;
-    padding: 4rem;
-    gap: 4rem;
-  }
-}
-
-.about-image-wrapper {
-  position: relative;
-  width: 180px;
-  height: 180px;
-  flex-shrink: 0;
-}
-
-@media (min-width: 768px) {
-  .about-image-wrapper {
-    width: 220px;
-    height: 220px;
-  }
-}
-
-.glow-backdrop {
-  position: absolute;
-  inset: -15px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  filter: blur(20px);
-  opacity: 0.4;
-  border-radius: var(--radius-lg);
-  z-index: 0;
-}
-
-.about-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  border-radius: var(--radius-lg);
-  border: 3px solid var(--glass-border);
-  position: relative;
-  z-index: 1;
-}
-
-.exp-badge {
-  position: absolute;
-  bottom: -1.5rem;
-  right: -2.5rem;
-  background: var(--bg-card);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
-  padding: 1rem 1.5rem;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  z-index: 2;
-}
-
-.pulse-subtle {
-  animation: pulse-border 4s infinite alternate;
-}
-
-@keyframes pulse-border {
-  0% { border-color: var(--glass-border); }
-  100% { border-color: var(--accent-primary); box-shadow: 0 0 15px rgba(96, 165, 250, 0.2); }
-}
-
-.exp-num {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--accent-primary);
-  line-height: 1;
-}
-
-.exp-text {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  line-height: 1.2;
-}
-
-.about-intro {
+  margin-bottom: 5rem;
   text-align: center;
 }
 
-@media (min-width: 768px) {
-  .about-intro {
-    text-align: left;
-  }
-}
-
-.text-4xl { font-size: 2.5rem; line-height: 1.2; }
-.text-xl { font-size: 1.25rem; }
-.text-accent { color: var(--accent-primary); }
-.uppercase { text-transform: uppercase; }
-.tracking-wide { letter-spacing: 0.05em; }
-
-/* Article Content */
-.about-content-wrapper {
-  padding: 0 1rem;
-}
-
-@media (min-width: 768px) {
-  .about-content-wrapper {
-    padding: 0 2rem;
-  }
-}
-
-.about-text-clean {
-  font-size: 1.15rem;
-  line-height: 1.8;
+.about-title {
+  font-family: var(--font-display);
+  font-size: 6rem;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 1;
   color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to bottom, #fff 50%, rgba(255,255,255,0.4));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.about-text-clean p {
-  margin-bottom: 1.8rem;
-  color: rgba(255, 255, 255, 0.85); /* Slightly brighter than text-muted for readability */
-}
-
-.lead-text {
-  font-size: 1.35rem;
+.about-subtitle {
+  font-size: 1.4rem;
   font-weight: 500;
-  color: var(--text-primary) !important;
-  line-height: 1.6;
+  color: var(--accent-primary);
+  letter-spacing: -0.02em;
 }
 
-.text-divider {
-  width: 40px;
-  height: 4px;
-  background: var(--accent-primary);
-  border-radius: 2px;
-  margin: 2.5rem 0;
-  opacity: 0.7;
+/* Content Layout */
+.about-content {
+  margin: 0 auto;
+  max-width: 680px;
+}
+
+.story-section {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: #94a3b8;
+}
+
+.story-section p {
+  margin-bottom: 2.5rem;
+}
+
+.story-section .lead {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  margin-bottom: 3rem;
+  text-align: center;
 }
 
 .footer-note {
   font-style: italic;
-  color: var(--text-muted) !important;
+  color: var(--text-muted);
   font-size: 1rem;
-  border-left: 3px solid var(--glass-border);
-  padding-left: 1.5rem;
-  margin-top: 3rem;
+  margin-top: 4rem;
+  text-align: center;
+}
+
+/* Links Section */
+.about-footer-nav {
+  margin-top: 5rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
+  flex-wrap: wrap;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.nav-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent-primary);
+  font-weight: 800;
+}
+
+.nav-links, .email-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.nav-sep {
+  color: rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+}
+
+.nav-links a:hover, .email-link:hover {
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.fade-in-delayed {
+  opacity: 0;
+  animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1024px) {
+  .about-title { font-size: 4rem; }
+  .about-footer-nav { gap: 2.5rem; }
+}
+
+@media (max-width: 768px) {
+  .about-view { padding-top: 120px; }
+  .about-title { font-size: 3.5rem; }
+  .story-section .lead { font-size: 1.5rem; }
+  .about-footer-nav { flex-direction: column; gap: 2rem; }
 }
 </style>
